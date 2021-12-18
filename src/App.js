@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Questionaire from "./components/Questionaire";
 
 const API_URL = 'https://opentdb.com/api.php?amount=10&category=21&difficulty=easy&type=multiple'
 function App() {
@@ -12,23 +13,18 @@ function App() {
         setQuestions(data.results);
         console.log("q:", questions);
       })
-  }, [])
+  }, []);
+
+  const handleAnswer = (answer) => {
+
+  }
+
   return (
     <>
 
 
       {questions.length > 0 ? (
-        <div className="container">
-          <div className="bg-white text-purple-800 p-10 rounded shadow-md">
-            <h2 className="text-2xl" dangerouslySetInnerHTML={{ __html: questions[0].question }} />
-          </div>
-          <div className="grid grid-cols-2 gap-6 mt-6 justify-around ">
-            <button className="bg-white  p-4 text-purple-800 font-semibold rounded shadow ">{questions[0].correct_answer}</button>
-            <button className="bg-white  p-4 text-purple-800 font-semibold rounded shadow ">{questions[0].incorrect_answers[0]}</button>
-            <button className="bg-white  p-4 text-purple-800 font-semibold rounded shadow">{questions[0].incorrect_answers[1]}</button>
-            <button className="bg-white  p-4 text-purple-800 font-semibold rounded shadow">{questions[0].incorrect_answers[2]}</button>
-          </div>
-        </div>
+        <Questionaire data={questions[0]} handleAnswer={handleAnswer} />
       ) : (<h3 className="text-2xl text-white font-bold"> Loading...</h3>)}
 
 
