@@ -5,41 +5,62 @@ const API_URL = 'https://opentdb.com/api.php?amount=10&category=21&difficulty=ea
 function App() {
   const [questions, setQuestions] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [score, setScore] = useState(0)
+  const [showAnswers, setShowAnswers] = useState(false)
+
   useEffect(() => {
     fetch(API_URL)
       .then(res => res.json())
       .then(data => {
-        console.log(data.results);
-        setQuestions(data.results);
-        console.log("q:", questions);
-        // setCurrentIndex(data.results[0])
-      })
+
+        // setQuestions(data.results);
+        const questions = data.results.map((question) => ({
+          ...question, answers: [question.correct_answer, ...question.incorrect_answers].sort(() => Math.random() - 0.5)
+        })
+
+        )
+        setQuestions(questions);
+
+      });
   }, []);
 
   const handleAnswer = (answer) => {
-    setCurrentIndex(currentIndex + 1);
-
+    if (!showAnswers) //prevent double answers
+    {
+      if (answer === questions[currentIndex].correct_answer) {
+        setScore(score + 1);
+      }
+    }
+    // const newIndex = currentIndex + 1
+    // setCurrentIndex(newIndex);
+    setShowAnswers(true);
 
   }
 
-  return (
-    <>
+  const handleNextQuestion = () => {
+    setShowAnswers(false);
+    setCurrentIndex(currentIndex + 1);
+  }
+
+  return questions.length > 0 ?
+    (
+
+      <div className="container">
+        {currentIndex >= questions.length ? (<h1 className="text-3xl text-white font-bold">Your score is {score}</h1>)
+          : (
+            <Questionaire
+              data={questions[currentIndex]}
+              showAnswers={showAnswers}
+              handleAnswer={handleAnswer}
+              handleNextQuestion={handleNextQuestion} />
+          )} </div>
+    ) :
+    (<h3 className="text-2xl text-white font-bold"> Loading...</h3>)
 
 
-      {questions.length > 0 ?
-        (
-
-          <div className="container">
-            <Questionaire data={questions[currentIndex]} handleAnswer={handleAnswer} />
-          </div>
-        ) :
-        (<h3 className="text-2xl text-white font-bold"> Loading...</h3>)}
 
 
-
-
-    </>
-  );
 }
+
 
 export default App;
